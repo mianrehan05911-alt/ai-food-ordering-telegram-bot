@@ -1,0 +1,399 @@
+{
+  "name": "My workflow 4",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "You are a smart, friendly, and polite food ordering assistant for Foodrinks Cafe. Your tone should feel exactly like a popular food delivery app, not an ecommerce store. Always keep your replies short, clean, and spaced out like a normal WhatsApp chat.\n\nCRITICAL FORMATTING RULES:\n\nDo not use markdown bold symbols like text.\n\nDo not use slashes or raw code symbols like /n.\n\nUse emojis naturally to keep it pleasant.\n\nUse stars only to highlight single important words like Confirmed or Rejected.\n\n1. Welcome Message\nWhen a user sends their very first message (like hi, hello), reply exactly with this text layout:\n\nWelcome to Foodrinks cafe 🍽️\n\nHow can I help you today?\n\n🛒Place an order\n\nFAQ/Information ❓\n\n📦Check order / stock\n\n2. Placing an Order\nIf the user wants to place an order, guide them step by step. Ask for their name, then the food item, and then the quantity. One question at a time.\n\nBefore confirming the order, you must use the Google Sheets Inventory tool to check stock.\n\nIf the item is available:\nSay: Your order for [item name] ([quantity] quantity) is confirmed Action: Call the Orders Sheet tool to log the order. You must set the Status column to Confirmed and the Description column to Order accepted (item available).\nAction: Call the Gmail tool immediately to send an email to the kitchen staff informing them of the new confirmed order details.\n\nIf the item is out of stock:\nSay: Sorry, [item name] is out of stock. Available options: [list available items from the sheet]\n\nAction: Call the Orders Sheet tool to log the attempt. Set the Status column to Rejected and the Description column to Order rejected (out of stock).\n\n3. FAQ / Information\nIf the user asks for FAQs, answer shortly and clearly:\n\nDelivery time: 30 to 45 minutes.\n\nPayment method: Cash on delivery or online transfer.\n\nRestaurant hours: 12 PM to 11 PM.\n\n4. Check Order or Stock Status\nIf the user wants to check an order or check stock, ask them for the food name or their order ID.\n\nChecking Order: Look up the ID in the Orders sheet. Reply only with the status, for example: Your order status is Confirmed (or Rejected / Cancelled / Delivered).\n\nChecking Stock: Look up the food item in the Inventory sheet. Reply with the available quantity. If they ask for the whole menu, list all available food items with their quantities.\n\n5. Cancelling an Order\nIf the user wants to cancel an order, reply politely with this exact message:\n\nSorry AI cannot cancel orders directly.\n\nPlease call the restaurant owner first and inform them.\n\nOwner Contact: +92 311 3933073\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "5dd1e74d-05d0-49e1-b405-ccdbef2f9ba9",
+      "name": "AI Agent",
+      "notes": "Use this tool to fetch the current hotel restaurant menu, item list, prices, and availability when a user asks about food, drinks, or ordering a meal"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.chat.id }}",
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        224,
+        208
+      ],
+      "id": "662b5645-93f9-4c20-b29c-cef74a912d28",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-safeguard-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "16f7b768-5478-4b7e-8953-351a64d8d8f5",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "bZq7QJmss6NTL8Fh",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        16
+      ],
+      "id": "32ad51cb-95d8-4736-b97f-68faf88820f2",
+      "name": "Telegram Trigger",
+      "webhookId": "b38fe7aa-f742-4678-bb4c-febcdde34397",
+      "credentials": {
+        "telegramApi": {
+          "id": "9LNRS5mfWWZwBC2A",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ahqlFRmS5xTv67IG22ycYVRz9YmZhtZNMjCIyRXs6aE",
+          "mode": "list",
+          "cachedResultName": "fooddrink_cafe7",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ahqlFRmS5xTv67IG22ycYVRz9YmZhtZNMjCIyRXs6aE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "inventry",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ahqlFRmS5xTv67IG22ycYVRz9YmZhtZNMjCIyRXs6aE/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        688,
+        208
+      ],
+      "id": "a8ae2fc5-5028-4fe6-b11e-bfeaeabbf2e9",
+      "name": "inventry",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zMby3uIWxSqpGlGf",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ahqlFRmS5xTv67IG22ycYVRz9YmZhtZNMjCIyRXs6aE",
+          "mode": "list",
+          "cachedResultName": "fooddrink_cafe7",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ahqlFRmS5xTv67IG22ycYVRz9YmZhtZNMjCIyRXs6aE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1980647234,
+          "mode": "list",
+          "cachedResultName": "FAQ's",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ahqlFRmS5xTv67IG22ycYVRz9YmZhtZNMjCIyRXs6aE/edit#gid=1980647234"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        592,
+        208
+      ],
+      "id": "3058ddd6-b7dd-4ccf-af63-30a25bb0b1f7",
+      "name": "FAQ's",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zMby3uIWxSqpGlGf",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1ahqlFRmS5xTv67IG22ycYVRz9YmZhtZNMjCIyRXs6aE",
+          "mode": "list",
+          "cachedResultName": "fooddrink_cafe7",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ahqlFRmS5xTv67IG22ycYVRz9YmZhtZNMjCIyRXs6aE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1366712193,
+          "mode": "list",
+          "cachedResultName": "orders\\",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ahqlFRmS5xTv67IG22ycYVRz9YmZhtZNMjCIyRXs6aE/edit#gid=1366712193"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Customer_Name__using_to_match_', ``, 'string') }}",
+            "Food Item": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Food_Item', ``, 'string') }}",
+            "Quantity Ordered": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Quantity_Ordered', ``, 'string') }}",
+            "Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Status', ``, 'string') }}",
+            "Order Date": "={{ $now.format('yyyy-MM-dd hh-mm-ss a') }}"
+          },
+          "matchingColumns": [
+            "Customer Name"
+          ],
+          "schema": [
+            {
+              "id": "Customer Name",
+              "displayName": "Customer Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Food Item",
+              "displayName": "Food Item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Quantity Ordered",
+              "displayName": "Quantity Ordered",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Order Date",
+              "displayName": "Order Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        496,
+        224
+      ],
+      "id": "2a7d9b8b-c2b1-400b-a90c-82d614ed4817",
+      "name": "order",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zMby3uIWxSqpGlGf",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "98add3e9-4ee4-4a0c-a849-26fca4a2f05f",
+      "name": "Send a text message",
+      "webhookId": "530929c6-b1d4-4c67-aee3-4a6034c35aec",
+      "credentials": {
+        "telegramApi": {
+          "id": "9LNRS5mfWWZwBC2A",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "aiautomationn8n001@gmail.com",
+        "subject": "order recived ",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        368,
+        208
+      ],
+      "id": "53c1dfd5-716e-4164-9aa7-3a76836451d9",
+      "name": "Send a message in Gmail",
+      "webhookId": "3b556137-0c90-4b73-8e82-eef13f921a33",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "jCXsf10AarnH2Wip",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "inventry": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FAQ's": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "order": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "a735cdd8-88f8-46f0-a363-670eac15f627",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4b7d9684b9d6354a638f38c7550db6c80428c063ba92bd6dfcb7eea3cbb720e2"
+  },
+  "nodeGroups": [],
+  "id": "8NNgeClNC4QOnbll",
+  "tags": []
+}
