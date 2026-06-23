@@ -48,16 +48,16 @@ Google Sheets.
 ![Telegram Chat 2](telegram-chat-2.png)
 
 ### Google Sheets — Live Inventory
-![Inventory](google-sheets-inventory.png)
+![Inventory](google-sheets-inventory.png.png)
 
 ### Google Sheets — Orders Log
-![Orders](google-sheets-orders.png)
+![Orders](google-sheets-faqs.png.png)
 
 ### Google Sheets — FAQ Database
-![FAQs](google-sheets-faqs.png)
+![FAQs](google-sheets-faqs.png.png)
 
 ### Gmail — Kitchen Notification Email
-![Kitchen Email](kitchen-email.png)
+![Kitchen Email](kitchen-email.png.png)
 
 ---
 
