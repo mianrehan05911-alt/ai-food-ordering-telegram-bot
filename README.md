@@ -51,7 +51,7 @@ Google Sheets.
 ![Inventory](google-sheets-inventory.png.png)
 
 ### Google Sheets — Orders Log
-![Orders](google-sheets-faqs.png.png)
+![Orders](google-sheets-orders.png.png)
 
 ### Google Sheets — FAQ Database
 ![FAQs](google-sheets-faqs.png.png)
