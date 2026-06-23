@@ -8,7 +8,8 @@ the live menu to notifying the kitchen — with zero human involvement after set
 
 ## 🧠 Workflow Architecture
 
-![n8n Workflow Canvas](n8n-workflow-canvas.png)
+
+![n8n Workflow Canvas](workfolow-n8n.png)
 
 The entire system runs inside a single n8n workflow with an AI Agent at its 
 core. The agent is powered by Groq LLM and has 4 tools connected to it — 
